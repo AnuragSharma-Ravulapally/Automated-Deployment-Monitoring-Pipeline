@@ -1,0 +1,15 @@
+# Local .terraform directories
+.terraform/
+
+# .tfstate files
+*.tfstate
+*.tfstate.backup
+
+# .tfvars files (these often contain secrets)
+*.tfvars
+
+# Crash log files
+crash.log
+
+# Exclude override files as they are usually used to override resources locally and should not be committed
+.terraform.lock.hcl
