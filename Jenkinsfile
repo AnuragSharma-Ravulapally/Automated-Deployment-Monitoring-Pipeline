@@ -8,9 +8,9 @@ pipeline {
     agent any
 
     // These parameters will be used in the pipeline.
-    parameters {
-        string(name: 'ANSIBLE_PRIVATE_IP', defaultValue: '172.31.23.213', description: 'Private IP of the Ansible Server')
-        string(name: 'WEB_SERVER_PUBLIC_IP', defaultValue: '98.93.250.181', description: 'Public IP of the Web Server (for Nagios)')
+    environment {
+        ANSIBLE_PRIVATE_IP   = '172.31.23.213'
+        WEB_SERVER_PUBLIC_IP = '98.93.250.181'
     }
 
     stages {
