@@ -22,14 +22,18 @@ pipeline {
             steps {
                 // Use the 'admp.pem' credential you created in Jenkins
                 sshagent(['admp.pem']) {
-                    sh '''
+                    // 
+                    // <<< FIX: Changed from ''' to """
+                    // This allows Groovy to interpolate the ${params.ANSIBLE_PRIVATE_IP} variable
+                    //
+                    sh """
                     # SSH to Ansible server and run your deployment playbook
                     # Note: I am using your directory path '~/admp-ansible'
                     ssh -o StrictHostKeyChecking=no ubuntu@${params.ANSIBLE_PRIVATE_IP} '
                         cd ~/admp-ansible &&
                         ansible-playbook -i inventory.ini deploy_website.yml
                     '
-                    '''
+                    """
                 }
             }
         }
@@ -37,14 +41,19 @@ pipeline {
         stage('2. Configure Nagios Monitoring via Ansible') {
             steps {
                 sshagent(['admp.pem']) {
-                    sh '''
+                    //
+                    // <<< FIX: Changed from ''' to """
+                    // This allows Groovy to interpolate the ${params.ANSIBLE_PRIVATE_IP}
+                    // and ${params.WEB_SERVER_PUBLIC_IP} variables
+                    //
+                    sh """
                     # SSH to Ansible server and run the monitoring playbook
                     # We pass the web server's public IP as an "extra var"
                     ssh -o StrictHostKeyChecking=no ubuntu@${params.ANSIBLE_PRIVATE_IP} '
                         cd ~/admp-ansible &&
                         ansible-playbook -i inventory.ini configure_monitoring.yml -e "web_server_public_ip=${params.WEB_SERVER_PUBLIC_IP}"
                     '
-                    '''
+                    """
                 }
             }
         }
