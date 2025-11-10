@@ -1,45 +1,30 @@
 /**
- * This is the updated Jenkinsfile with your new IPs and credential ID.
- * Commit this file to the root of your GitHub repository.
+ * This is your new, simplified Jenkinsfile.
+ * It's updated based on your screenshots and IPs.
+ * It removes the 'Copy' stage because your Ansible playbook
+ * already clones the repo. This is much cleaner.
  */
 pipeline {
     agent any
 
     // These parameters will be used in the pipeline.
-    // I've updated the IPs with the ones you provided.
     parameters {
         string(name: 'ANSIBLE_PRIVATE_IP', defaultValue: '172.31.23.213', description: 'Private IP of the Ansible Server')
         string(name: 'WEB_SERVER_PUBLIC_IP', defaultValue: '98.93.250.181', description: 'Public IP of the Web Server (for Nagios)')
     }
 
     stages {
-        stage('1. Checkout Code') {
-            steps {
-                git branch: 'main',
-                    // This credential ID must exist in Jenkins
-                    credentialsId: 'github-pat-global', 
-                    url: 'https://github.com/AnuragSharma-Ravulapally/Automated-Deployment-Monitoring-Pipeline'
-            }
-        }
+        // We don't need a 'Checkout' stage here,
+        // because your Ansible playbook does the checkout.
+        // Jenkins is just the "trigger".
 
-        stage('2. Copy Artifact to Ansible Server') {
+        stage('1. Deploy Website via Ansible') {
             steps {
-                // Use the 'admp.pem' SSH key credential
-                // This ID must exist in Jenkins
+                // Use the 'admp.pem' credential you created in Jenkins
                 sshagent(['admp.pem']) {
                     sh '''
-                    # Copy the index.html file from Jenkins workspace to your Ansible project directory
-                    scp -o StrictHostKeyChecking=no index.html ubuntu@${params.ANSIBLE_PRIVATE_IP}:~/admp-ansible/index.html
-                    '''
-                }
-            }
-        }
-
-        stage('3. Deploy Website via Ansible') {
-            steps {
-                sshagent(['admp.pem']) {
-                    sh '''
-                    # SSH to Ansible server and run the deployment playbook
+                    # SSH to Ansible server and run your deployment playbook
+                    # Note: I am using your directory path '~/admp-ansible'
                     ssh -o StrictHostKeyChecking=no ubuntu@${params.ANSIBLE_PRIVATE_IP} '
                         cd ~/admp-ansible &&
                         ansible-playbook -i inventory.ini deploy_website.yml
@@ -49,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('4. Configure Nagios Monitoring via Ansible') {
+        stage('2. Configure Nagios Monitoring via Ansible') {
             steps {
                 sshagent(['admp.pem']) {
                     sh '''
