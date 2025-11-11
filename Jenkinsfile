@@ -5,12 +5,12 @@ pipeline {
     parameters {
         string(
             name: 'ANSIBLE_PRIVATE_IP',
-            defaultValue: '172.31.23.213', // This hasn't changed
+            defaultValue: '172.31.23.213', 
             description: 'Private IP of the Ansible Server'
         )
         string(
             name: 'WEB_SERVER_PUBLIC_IP',
-            defaultValue: '52.55.187.225', // This is your NEW web server IP
+            defaultValue: '52.55.187.225',
             description: 'Public IP of the Web Server (for Nagios)'
         )
     }
