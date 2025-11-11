@@ -10,7 +10,7 @@ pipeline {
         )
         string(
             name: 'WEB_SERVER_PUBLIC_IP',
-            defaultValue: '52.55.187.225',
+            defaultValue: '52.55.187.225', // This is your NEW web server IP
             description: 'Public IP of the Web Server (for Nagios)'
         )
     }
@@ -20,7 +20,6 @@ pipeline {
             steps {
                 sshagent(['admp.pem']) {
                     sh """
-                        // We use "params.ANSIBLE_PRIVATE_IP" again
                         ssh -o StrictHostKeyChecking=no ubuntu@${params.ANSIBLE_PRIVATE_IP} '
                             cd ~/admp-ansible &&
                             ansible-playbook -i inventory.ini deploy_website.yml
@@ -33,7 +32,6 @@ pipeline {
             steps {
                 sshagent(['admp.pem']) {
                     sh """
-                        // We use "params." for both variables
                         ssh -o StrictHostKeyChecking=no ubuntu@${params.ANSIBLE_PRIVATE_IP} '
                             cd ~/admp-ansible &&
                             ansible-playbook -i inventory.ini configure_monitoring.yml -e "web_server_public_ip=${params.WEB_SERVER_PUBLIC_IP}"
